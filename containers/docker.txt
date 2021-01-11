@@ -1,0 +1,52 @@
+#===============================================================================
+# Install Docker Engine - Docker-CE
+#   - docker-ce is a certified release provided directly by docker.com
+#   - docker-io is the name used by Debian/Ubuntu for the docker release
+#     provided on their official repos.
+#
+# Note: We will install docker-ce since for example nvidia-docker requires a
+#       Docker daemon with experimental features enabled.
+#===============================================================================
+# Remove docker.io
+sudo apt-get remove docker docker.io containerd runc
+
+#===============================================================================
+# Installation - Method 1
+#===============================================================================
+curl https://get.docker.com | sh \
+  && sudo systemctl start docker \
+  && sudo systemctl enable docker
+
+#===============================================================================
+# Installation - Method 2
+#===============================================================================
+# Install a few prerequisite packages which let apt use packages over HTTPS
+sudo apt update
+sudo apt install apt-transport-https ca-certificates curl software-properties-common
+
+# Add the GPG key for the official Docker repository to your system
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+# Add the Docker repository to APT sources (for ubuntu 18.04)
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu bionic stable"
+
+# Update the package database with the Docker packages from the newly added
+# repo
+sudo apt update
+
+# Make sure you are about to install from the Docker repo instead of the default
+# Ubuntu repo
+apt-cache policy docker-ce
+
+# Install Docker
+sudo apt install docker-ce
+
+#===============================================================================
+# Configuration
+#===============================================================================
+# Docker should now be installed, the daemon started, and the process enabled
+# to start on boot. Check that it's running
+sudo systemctl status docker
+
+# Add your username to the docker group
+sudo usermod -aG docker ${USER}

@@ -1,0 +1,25 @@
+#===============================================================================
+# Docker-Plex
+#===============================================================================
+# Grab the latest version of Plex container from
+# https://hub.docker.com/u/linuxserver/
+docker pull linuxserver/plex
+
+# Configure the usage parameters such as download folders, port number, etc. for
+# the service.
+docker create \
+    --name=plex                                             `# Creates a new docker container with the name “plex”` \
+    --net=host                                              `# Make the programs inside the Docker container look like they are running on the host itself` \
+    --restart=always                                        `# Start the Plex container automatically during boot`\
+    -e VERSION=latest                                       `# Install the latest version for Plex`\
+    -e PUID=1000 -e PGID=1000                               `# Specify the user and group id`\
+    -e TZ=Europe/Stockholm                                  `# Specifies the timezone information`\
+    -v /home/docker/plex/config:/config                     `# Specifies the config folder of the Plex library. This can grow very large (more than 50GB) if you have a large collection.`\
+    -v /home/docker/plex/transcode:/transcode               `# Specifies the location for the transcoding folder`\
+    -v /srv/pub/videos/documentaries:/data/documentaries    `# Specifies the location of the documentaries folder`\
+    -v /srv/pub/videos/movies:/data/movies                  `# Specifies the location of the movies folder`\
+    -v /srv/pub/videos/tv-series:/data/tvshows              `# Specifies the location of the tvshows folder`\
+    linuxserver/plex
+
+# Start the Plex container
+docker start plex

@@ -1,0 +1,40 @@
+#===============================================================================
+# Setup NVIDIA Container Toolkit
+# https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#docker
+#===============================================================================
+# Setup the stable repository and the GPG key:
+distribution=$(. /etc/os-release;echo $ID$VERSION_ID) \
+   && curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add - \
+   && curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+
+# Install the nvidia-docker2 package (and dependencies) after updating the package listing:
+sudo apt-get update && \
+sudo apt-get install -y nvidia-docker2
+
+# Restart the Docker daemon to complete the installation after setting the
+# default runtime (/etc/docker/daemon.json):
+sudo systemctl restart docker
+
+# At this point, a working setup can be tested by running a base CUDA container
+sudo docker run --rm --gpus all nvidia/cuda:11.0-base nvidia-smi
+
+This should result in a console output shown below:
+
++-----------------------------------------------------------------------------+
+| NVIDIA-SMI 450.80.02    Driver Version: 450.80.02    CUDA Version: 11.0     |
+|-------------------------------+----------------------+----------------------+
+| GPU  Name        Persistence-M| Bus-Id        Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp  Perf  Pwr:Usage/Cap|         Memory-Usage | GPU-Util  Compute M. |
+|                               |                      |               MIG M. |
+|===============================+======================+======================|
+|   0  GeForce GTX 1070    Off  | 00000000:01:00.0  On |                  N/A |
+|  0%   49C    P8    23W / 151W |    200MiB /  8116MiB |      0%      Default |
+|                               |                      |                  N/A |
++-------------------------------+----------------------+----------------------+
+
++-----------------------------------------------------------------------------+
+| Processes:                                                                  |
+|  GPU   GI   CI        PID   Type   Process name                  GPU Memory |
+|        ID   ID                                                   Usage      |
+|=============================================================================|
++-----------------------------------------------------------------------------+
